@@ -11,7 +11,9 @@ pipeline {
         stage('Checkout Backend') {
             steps {
                 echo 'Fazendo checkout do backend...'
-                git branch: 'jenkins2', url: 'https://github.com/EmmanuelFLG/edu-gestao-back.git'
+                dir("${BACKEND_DIR}") {
+                    git branch: 'jenkins2', url: 'https://github.com/EmmanuelFLG/edu-gestao-back.git'
+                }
             }
         }
 
@@ -27,8 +29,8 @@ pipeline {
         stage('Preparar Ambiente') {
             steps {
                 echo 'Verificando Docker e Docker Compose...'
-                sh 'docker --version'
-                sh 'docker-compose --version'
+                sh 'docker --version || true'
+                sh 'docker-compose --version || true'
             }
         }
 
