@@ -7,9 +7,26 @@ pipeline {
     }
 
     stages {
+
+        stage('Checkout Backend') {
+            steps {
+                echo 'Fazendo checkout do backend...'
+                git branch: 'jenkins2', url: 'https://github.com/EmmanuelFLG/edu-gestao-back.git'
+            }
+        }
+
+        stage('Checkout Frontend') {
+            steps {
+                echo 'Fazendo checkout do frontend...'
+                dir("${FRONTEND_DIR}") {
+                    git branch: 'jenkins2', url: 'https://github.com/EmmanuelFLG/edu-gestao-front.git'
+                }
+            }
+        }
+
         stage('Preparar Ambiente') {
             steps {
-                echo 'Verificando Docker e Docker Compose'
+                echo 'Verificando Docker e Docker Compose...'
                 sh 'docker --version'
                 sh 'docker-compose --version'
             }
@@ -18,13 +35,13 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    echo 'Atualizando imagens (pull)'
+                    echo 'Atualizando imagens do backend (pull)...'
                     sh 'docker-compose pull || true'
-                    echo 'Parando e removendo containers antigos'
+                    echo 'Parando e removendo containers antigos do backend...'
                     sh 'docker-compose down -v || true'
-                    echo 'Subindo backend com Docker Compose'
+                    echo 'Subindo backend com Docker Compose...'
                     sh 'docker-compose up -d --build'
-                    echo 'Exibindo últimos logs do backend'
+                    echo 'Exibindo últimos logs do backend...'
                     sh 'docker-compose logs --tail=50'
                 }
             }
@@ -33,13 +50,13 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    echo 'Atualizando imagens (pull)'
+                    echo 'Atualizando imagens do frontend (pull)...'
                     sh 'docker-compose pull || true'
-                    echo 'Parando e removendo containers antigos'
+                    echo 'Parando e removendo containers antigos do frontend...'
                     sh 'docker-compose down -v || true'
-                    echo 'Subindo frontend com Docker Compose'
+                    echo 'Subindo frontend com Docker Compose...'
                     sh 'docker-compose up -d --build'
-                    echo 'Exibindo últimos logs do frontend'
+                    echo 'Exibindo últimos logs do frontend...'
                     sh 'docker-compose logs --tail=50'
                 }
             }
@@ -47,7 +64,7 @@ pipeline {
 
         stage('Verificar Containers') {
             steps {
-                echo 'Listando containers ativos'
+                echo 'Listando containers ativos...'
                 sh 'docker ps'
             }
         }
